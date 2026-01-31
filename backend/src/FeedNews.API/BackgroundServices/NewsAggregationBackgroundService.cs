@@ -1,3 +1,4 @@
+using FeedNews.Application.Common.Repositories;
 using FeedNews.Application.Configuration;
 using FeedNews.Application.Features.News.Commands;
 using FeedNews.Application.Features.News.Queries;
@@ -10,10 +11,6 @@ using Microsoft.Extensions.Options;
 
 namespace FeedNews.API.BackgroundServices;
 
-/// <summary>
-/// Background service that runs daily at 18:00 (6:00 PM) to aggregate news from Reuters and VNExpress,
-/// generate AI summaries using Google Gemini, and send to Slack.
-/// </summary>
 public class NewsAggregationBackgroundService : BackgroundService
 {
     private readonly ILogger<NewsAggregationBackgroundService> _logger;
@@ -154,9 +151,6 @@ public class NewsAggregationBackgroundService : BackgroundService
         }
     }
 
-    /// <summary>
-    /// Processes a single news category: fetch articles, rank them, summarize, and save to database.
-    /// </summary>
     private async Task ProcessCategory(
         IMediator mediator,
         ILogger logger,
@@ -204,6 +198,13 @@ public class NewsAggregationBackgroundService : BackgroundService
                 }
             }
 
+            var unitOfWork = _serviceProvider.CreateScope().ServiceProvider.GetRequiredService<IUnitOfWork>();
+            foreach (var article in summarizedNews)
+            {
+                await unitOfWork.News.AddAsync(article);
+            }
+            await unitOfWork.SaveChangesAsync();
+
             allFetchedNews.AddRange(summarizedNews);
             newsByCategoryForSlack[category] = summarizedNews;
 
@@ -216,9 +217,6 @@ public class NewsAggregationBackgroundService : BackgroundService
         }
     }
 
-    /// <summary>
-    /// Sends aggregated news to Slack grouped by category and updates the slack_sent_at timestamp.
-    /// </summary>
     private async Task SendToSlack(
         IMediator mediator,
         ILogger logger,
@@ -233,10 +231,14 @@ public class NewsAggregationBackgroundService : BackgroundService
 
             if (result)
             {
+                var unitOfWork = _serviceProvider.CreateScope().ServiceProvider.GetRequiredService<IUnitOfWork>();
+                
                 foreach (var article in allArticles)
                 {
                     article.SlackSentAt = DateTime.UtcNow;
+                    await unitOfWork.News.UpdateAsync(article);
                 }
+                await unitOfWork.SaveChangesAsync();
 
                 logger.LogInformation("Successfully sent {ArticleCount} articles to Slack", allArticles.Count);
             }

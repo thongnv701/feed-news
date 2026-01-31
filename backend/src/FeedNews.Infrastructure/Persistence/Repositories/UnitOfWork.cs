@@ -1,7 +1,6 @@
-﻿using FeedNews.Application.Common.Repositories;
+using FeedNews.Application.Common.Repositories;
+using FeedNews.Application.Contracts.Repositories;
 using FeedNews.Infrastructure.Persistence.Contexts;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace FeedNews.Infrastructure.Persistence.Repositories;
 
@@ -9,6 +8,7 @@ public class UnitOfWork : IUnitOfWork
 {
     private const string ErrorNotOpenTransaction = "You not open transaction yet!";
     private const string ErrorAlreadyOpenTransaction = "Transaction already open";
+    private INewsRepository? _newsRepository;
 
     public UnitOfWork(FeedNewsContext context)
     {
@@ -18,6 +18,15 @@ public class UnitOfWork : IUnitOfWork
     internal FeedNewsContext Context { get; }
 
     public bool IsTransaction { get; private set; }
+
+    public INewsRepository News
+    {
+        get
+        {
+            _newsRepository ??= new NewsRepository(Context);
+            return _newsRepository;
+        }
+    }
 
     public Task BeginTransactionAsync()
     {
@@ -35,12 +44,15 @@ public class UnitOfWork : IUnitOfWork
         IsTransaction = false;
     }
 
+    public async Task SaveChangesAsync()
+    {
+        await Context.SaveChangeAsync().ConfigureAwait(false);
+    }
+
     public void RollbackTransaction()
     {
         if (!IsTransaction) throw new Exception(ErrorNotOpenTransaction);
 
         IsTransaction = false;
-
-        foreach (EntityEntry entry in Context.ChangeTracker.Entries()) entry.State = EntityState.Detached;
     }
 }

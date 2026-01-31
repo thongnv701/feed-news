@@ -1,3 +1,5 @@
+using FeedNews.Application.Common.Repositories;
+using FeedNews.Application.Contracts.Repositories;
 using FeedNews.Application.Contracts.Services;
 using MediatR;
 using NewsEntity = FeedNews.Domain.Entities.News;
@@ -8,13 +10,16 @@ public class FetchNewsCommandHandler : IRequestHandler<FetchNewsCommand, List<Ne
 {
     private readonly IReutersNewsService _reutersService;
     private readonly IVNExpressNewsService _vnExpressService;
+    private readonly INewsRepository _newsRepository;
 
     public FetchNewsCommandHandler(
         IReutersNewsService reutersService,
-        IVNExpressNewsService vnExpressService)
+        IVNExpressNewsService vnExpressService,
+        INewsRepository newsRepository)
     {
         _reutersService = reutersService;
         _vnExpressService = vnExpressService;
+        _newsRepository = newsRepository;
     }
 
     public async Task<List<NewsEntity>> Handle(FetchNewsCommand request, CancellationToken cancellationToken)
@@ -28,6 +33,16 @@ public class FetchNewsCommandHandler : IRequestHandler<FetchNewsCommand, List<Ne
         allNews.AddRange(await reutersTasks);
         allNews.AddRange(await vnExpressTasks);
 
-        return allNews;
+        var uniqueNews = new List<NewsEntity>();
+        foreach (var news in allNews)
+        {
+            var exists = await _newsRepository.ExistsByUrlAsync(news.Url);
+            if (!exists)
+            {
+                uniqueNews.Add(news);
+            }
+        }
+
+        return uniqueNews;
     }
 }
