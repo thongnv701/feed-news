@@ -1,0 +1,99 @@
+# Top-most EditorConfig file
+root = true
+
+# All C# files
+[*.cs]
+
+# 1. PascalCase for public, protected, and internal members
+dotnet_naming_rule.pascal_case_for_public_members.severity = error
+dotnet_naming_rule.pascal_case_for_public_members.symbols = public_methods_properties_classes
+dotnet_naming_rule.pascal_case_for_public_members.style = pascal_case
+
+dotnet_naming_symbols.public_methods_properties_classes.applicable_kinds = method, property, class
+dotnet_naming_symbols.public_methods_properties_classes.applicable_accessibilities = public, protected, internal
+
+dotnet_naming_style.pascal_case.capitalization = pascal_case
+
+# 2. camelCase for private fields and local variables
+dotnet_naming_rule.camel_case_for_private_fields.severity = warning
+dotnet_naming_rule.camel_case_for_private_fields.symbols = private_fields
+dotnet_naming_rule.camel_case_for_private_fields.style = camel_case_with_underscore
+
+dotnet_naming_symbols.private_fields.applicable_kinds = field
+dotnet_naming_symbols.private_fields.applicable_accessibilities = private
+
+dotnet_naming_style.camel_case_with_underscore.capitalization = camel_case
+dotnet_naming_style.camel_case_with_underscore.required_prefix = _
+
+# Local variables (without underscore)
+dotnet_naming_rule.camel_case_for_local_variables.severity = warning
+dotnet_naming_rule.camel_case_for_local_variables.symbols = local_variables
+dotnet_naming_rule.camel_case_for_local_variables.style = camel_case
+
+dotnet_naming_symbols.local_variables.applicable_kinds = local
+dotnet_naming_style.camel_case.capitalization = camel_case
+
+# 3. ALL_CAPS for constants
+dotnet_naming_rule.all_caps_for_constants.severity = warning
+dotnet_naming_rule.all_caps_for_constants.symbols = constants
+dotnet_naming_rule.all_caps_for_constants.style = all_caps
+
+dotnet_naming_symbols.constants.applicable_kinds = field
+dotnet_naming_symbols.constants.applicable_modifiers = const
+
+dotnet_naming_style.all_caps.capitalization = all_upper
+
+# 4. Prefix with 'I' for interfaces
+dotnet_naming_rule.prefix_interface_with_i.severity = error
+dotnet_naming_rule.prefix_interface_with_i.symbols = interfaces
+dotnet_naming_rule.prefix_interface_with_i.style = prefix_i
+
+dotnet_naming_symbols.interfaces.applicable_kinds = interface
+
+dotnet_naming_style.prefix_i.required_prefix = I
+
+# 5. No space before parentheses in method calls and declarations
+dotnet_style_parentheses_in_method_call_space_after = false:error
+dotnet_style_parentheses_in_method_declaration_space_after = false:error
+
+# 6. Spaces around operators
+dotnet_diagnostic.IDE0040.severity = error
+
+# Organize usings
+dotnet_sort_system_directives_first = true:suggestion
+dotnet_separate_import_directive_groups = true:suggestion
+
+
+# StyleCop rules
+
+# Require file headers (you can customize this)
+dotnet_diagnostic.SA1633.severity = warning
+
+# Require braces around statements
+dotnet_diagnostic.SA1503.severity = error
+
+# Require Allman-style braces (open braces on new line)
+dotnet_diagnostic.SA1500.severity = warning
+
+# Require space after a comma
+dotnet_diagnostic.SA1001.severity = suggestion
+
+# Require proper indentation
+dotnet_diagnostic.SA1116.severity = warning
+
+# Allow var when the type is obvious
+dotnet_diagnostic.IDE0008.severity = suggestion
+dotnet_diagnostic.IDE0009.severity = suggestion
+
+# You can specify similar settings for other rules as needed
+
+dotnet_diagnostic.CA1000.severity = suggestion
+
+dotnet_diagnostic.CS0168.severity = error
+# Require each attribute to be on its own line
+dotnet_diagnostic.SA1134.severity = error
+
+# Not let space at the end line
+dotnet_diagnostic.SA1028.severity = error
+
+dotnet_diagnostic.SA1600.severity = none

@@ -1,0 +1,107 @@
+<root>
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>1.3</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral,
+            PublicKeyToken=b77a5c561934e089
+        </value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral,
+            PublicKeyToken=b77a5c561934e089
+        </value>
+    </resheader>
+    <data name="VerificationEmailSubject" xml:space="preserve">
+        <value>Xác Nhận Đăng Ký Tài Khoản FeedNews</value>
+    </data>
+    <data name="VerificationEmailTemplate" xml:space="preserve">
+        <value>&lt;!DOCTYPE html&gt;
+&lt;html lang="vi"&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+    &lt;style&gt;
+        body { font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f4f4; }
+        .container { max-width: 600px; margin: 20px auto; background-color: #ffffff; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        .header { text-align: center; padding: 20px 0; }
+        .header img { max-width: 150px; }
+        .content { padding: 20px; text-align: center; }
+        .code { font-size: 24px; font-weight: bold; color: #2c3e50; background-color: #ecf0f1; padding: 10px 20px; display: inline-block; border-radius: 5px; margin: 20px 0; }
+        .button { display: inline-block; padding: 12px 24px; background-color: #3498db; color: #ffffff; text-decoration: none; border-radius: 5px; font-weight: bold; }
+        .footer { text-align: center; padding: 20px; font-size: 12px; color: #7f8c8d; }
+        @media only screen and (max-width: 600px) { .container { padding: 10px; } .code { font-size: 20px; } }
+    &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;div class="container"&gt;
+        &lt;div class="header"&gt;
+            &lt;img src="{{0}}" alt="FeedNews Logo"&gt;
+        &lt;/div&gt;
+        &lt;div class="content"&gt;
+            &lt;h2&gt;Xác Nhận Đăng Ký Tài Khoản&lt;/h2&gt;
+            &lt;p&gt;Kính gửi {{1}},&lt;/p&gt;
+            &lt;p&gt;Cảm ơn bạn đã đăng ký tài khoản tại LevelUp Accounts! Vui lòng sử dụng mã xác nhận dưới đây để hoàn tất quá trình đăng ký:&lt;/p&gt;
+            &lt;div class="code"&gt;{{2}}&lt;/div&gt;
+            &lt;p&gt;Mã này có hiệu lực trong 24 giờ. Hãy nhập mã vào trang xác nhận trên website của chúng tôi để kích hoạt tài khoản.&lt;/p&gt;
+            &lt;a href="{{3}}" class="button"&gt;Xác Nhận Ngay&lt;/a&gt;
+            &lt;p&gt;Nếu bạn không thực hiện đăng ký này, vui lòng bỏ qua email này hoặc liên hệ qua &lt;a href="mailto:[email hỗ trợ]"&gt;[email hỗ trợ]&lt;/a&gt;.&lt;/p&gt;
+        &lt;/div&gt;
+        &lt;div class="footer"&gt;
+            &lt;p&gt;Trân trọng,&lt;br&gt;Đội ngũ FeedNews&lt;br&gt;
+            &lt;a href="[Website_URL]"&gt;[Website_URL]&lt;/a&gt; | &lt;a href="mailto:[email hỗ trợ]"&gt;[email hỗ trợ]&lt;/a&gt;&lt;/p&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;</value>
+    </data>
+    <data name="Testaa" xml:space="preserve">
+        <value>Viet Nam Vo Dich</value>
+    </data>
+    <data name="VerificationEmailBody" xml:space="preserve">
+        <value>&lt;!DOCTYPE html&gt;
+&lt;html lang="vi"&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+    &lt;style&gt;
+        body { font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f4f4; }
+        .container { max-width: 600px; margin: 20px auto; background-color: #ffffff; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        .header { text-align: center; padding: 20px 0; }
+        .header img { max-width: 150px; }
+        .content { padding: 20px; text-align: center; }
+        .code { font-size: 24px; font-weight: bold; color: #2c3e50; background-color: #ecf0f1; padding: 10px 20px; display: inline-block; border-radius: 5px; margin: 20px 0; }
+        .button { display: inline-block; padding: 12px 24px; background-color: #3498db; color: #ffffff; text-decoration: none; border-radius: 5px; font-weight: bold; }
+        .footer { text-align: center; padding: 20px; font-size: 12px; color: #7f8c8d; }
+        @media only screen and (max-width: 600px) { .container { padding: 10px; } .code { font-size: 20px; } }
+    &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;div class="container"&gt;
+        &lt;div class="header"&gt;
+            &lt;img src="{logo_url}" alt="LevelUp Accounts Logo"&gt;
+        &lt;/div&gt;
+        &lt;div class="content"&gt;
+            &lt;h2&gt;Xác Nhận Đăng Ký Tài Khoản&lt;/h2&gt;
+            &lt;p&gt;Kính gửi {0},&lt;/p&gt;
+            &lt;p&gt;Cảm ơn bạn đã đăng ký tài khoản tại LevelUp Accounts! Vui lòng sử dụng mã xác nhận dưới đây để hoàn tất quá trình đăng ký:&lt;/p&gt;
+            &lt;div class="code"&gt;{1}&lt;/div&gt;
+            &lt;p&gt;Mã này có hiệu lực trong 24 giờ. Hãy nhập mã vào trang xác nhận trên website của chúng tôi để kích hoạt tài khoản.&lt;/p&gt;
+            &lt;a href="{2}" class="button"&gt;Xác Nhận Ngay&lt;/a&gt;
+            &lt;p&gt;Nếu bạn không thực hiện đăng ký này, vui lòng bỏ qua email này hoặc liên hệ qua &lt;a href="mailto:{support_email}"&gt;{support_email}&lt;/a&gt;.&lt;/p&gt;
+        &lt;/div&gt;
+        &lt;div class="footer"&gt;
+            &lt;p&gt;Trân trọng,&lt;br&gt;Đội ngũ LevelUp Accounts&lt;br&gt;
+            &lt;a href="{web_url}"&gt;{web_url}&lt;/a&gt; | &lt;a href="mailto:{support_email}"&gt;{support_email}&lt;/a&gt;&lt;/p&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;</value>
+    </data>
+    <data name="Test" xml:space="preserve">
+        <value>Chi la test ma thoi</value>
+    </data>
+</root>

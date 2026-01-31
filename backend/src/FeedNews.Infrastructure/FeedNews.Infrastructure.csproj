@@ -1,0 +1,51 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net10.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <InvariantGlobalization>false</InvariantGlobalization>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <None Remove="Common\Queries\TestQuery.sql"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Dapper" Version="2.1.66"/>
+        <PackageReference Include="EFCore.NamingConventions" Version="10.0.0-rc.2"/>
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.1"/>
+        <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="10.0.1"/>
+        <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.0"/>
+        <PackageReference Include="Scrutor" Version="7.0.0"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Folder Include="Common\Exceptions\"/>
+        <Folder Include="Migrations\"/>
+        <Folder Include="Persistence\Migrations\"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\FeedNews.Application\FeedNews.Application.csproj"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <EmbeddedResource Include="Common\Queries\TestQuery.sql">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Common\Resources\MessageErrors.resx">
+            <Generator>ResXFileCodeGenerator</Generator>
+            <LastGenOutput>MessageErrors.Designer.cs</LastGenOutput>
+        </EmbeddedResource>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Compile Update="Common\Resources\MessageErrors.Designer.cs">
+            <DesignTime>True</DesignTime>
+            <AutoGen>True</AutoGen>
+            <DependentUpon>MessageErrors.resx</DependentUpon>
+        </Compile>
+    </ItemGroup>
+
+</Project>

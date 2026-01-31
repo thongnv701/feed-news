@@ -1,0 +1,26 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net10.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+
+        <PackageReference Include="BouncyCastle.NetCore" Version="2.2.1"/>
+        <PackageReference Include="FluentValidation.AspNetCore" Version="11.3.1"/>
+        <PackageReference Include="Mapster" Version="9.0.0-pre01"/>
+        <PackageReference Include="MediatR" Version="14.0.0"/>
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.4"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\FeedNews.Domain\FeedNews.Domain.csproj"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Folder Include="Common\Utils\"/>
+    </ItemGroup>
+
+</Project>

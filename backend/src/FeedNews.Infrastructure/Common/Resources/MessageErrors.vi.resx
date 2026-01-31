@@ -1,0 +1,33 @@
+<root>
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>1.3</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral,
+            PublicKeyToken=b77a5c561934e089
+        </value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral,
+            PublicKeyToken=b77a5c561934e089
+        </value>
+    </resheader>
+    <data name="Testaa" xml:space="preserve">
+        <value>VIET NAM VO DICH</value>
+    </data>
+    <data name="AccountExist" xml:space="preserve">
+        <value>Tài khoản với email {0} đã tồn tại</value>
+    </data>
+    <data name="AccountNotExist" xml:space="preserve">
+        <value>Tài khoản với email {0} không tồn tại hoặc đã được xác nhận</value>
+    </data>
+    <data name="VerificationCodeExpired" xml:space="preserve">
+        <value>Mã xác nhận đã hết hạn vui lòng bấm gửi lại mã</value>
+    </data>
+    <data name="VerificationCodeNotMatch" xml:space="preserve">
+        <value>Mã xác nhận không đúng</value>
+    </data>
+</root>

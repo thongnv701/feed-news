@@ -1,0 +1,2 @@
+﻿select id
+from account;
