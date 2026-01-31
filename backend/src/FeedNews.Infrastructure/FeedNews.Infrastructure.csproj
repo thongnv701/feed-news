@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
         <TargetFramework>net10.0</TargetFramework>
@@ -16,8 +16,12 @@
         <PackageReference Include="EFCore.NamingConventions" Version="10.0.0-rc.2"/>
         <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.1"/>
         <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="10.0.1"/>
+        <PackageReference Include="Microsoft.SemanticKernel" Version="1.13.0"/>
         <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.0"/>
+        <PackageReference Include="Polly" Version="8.4.1"/>
         <PackageReference Include="Scrutor" Version="7.0.0"/>
+        <PackageReference Include="SlackNet" Version="0.14.0"/>
+        <PackageReference Include="AngleSharp" Version="1.1.2"/>
     </ItemGroup>
 
     <ItemGroup>
@@ -27,6 +31,7 @@
     </ItemGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\FeedNews.Domain\FeedNews.Domain.csproj"/>
         <ProjectReference Include="..\FeedNews.Application\FeedNews.Application.csproj"/>
     </ItemGroup>
 

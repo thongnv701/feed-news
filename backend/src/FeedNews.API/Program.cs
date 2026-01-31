@@ -3,6 +3,7 @@ using Asp.Versioning.ApiExplorer;
 using Carter;
 using CorrelationId;
 using CorrelationId.DependencyInjection;
+using FeedNews.API.BackgroundServices;
 using FeedNews.API.Middleware;
 using FeedNews.Application;
 using FeedNews.Domain;
@@ -40,6 +41,10 @@ builder.Services.AddApplicationService(builder.Configuration);
 builder.Services.AddInfrastructureServices(builder.Configuration, builder.Environment);
 builder.Services.AddDomain();
 builder.Services.AddShare();
+
+// Register background service for daily news aggregation
+builder.Services.AddHostedService<NewsAggregationBackgroundService>();
+
 builder.Services.AddControllers();
 
 // Loging

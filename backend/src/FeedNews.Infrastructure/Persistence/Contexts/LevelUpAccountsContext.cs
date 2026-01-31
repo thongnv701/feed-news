@@ -1,4 +1,5 @@
-﻿using FeedNews.Domain.Entities;
+using FeedNews.Domain.Entities;
+using FeedNews.Infrastructure.Persistence.Configuration;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Attribute = FeedNews.Domain.Entities.Attribute;
@@ -27,6 +28,7 @@ public class FeedNewsContext : DbContext
     public virtual DbSet<WithdrawRequest> WithdrawRequests { get; set; }
     public virtual DbSet<Order> Orders { get; set; }
     public virtual DbSet<Payment> Payments { get; set; }
+    public virtual DbSet<News> NewsFeeds { get; set; }
 
     public async Task<int> SaveChangeAsync(CancellationToken cancellationToken = default)
     {
@@ -52,6 +54,9 @@ public class FeedNewsContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+
+        // Configure News entity
+        modelBuilder.ApplyConfiguration(new NewsEFConfiguration());
 
         modelBuilder.Entity<Account>()
             .HasOne(a => a.Role)

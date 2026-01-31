@@ -3,6 +3,7 @@ using System;
 using FeedNews.Infrastructure.Persistence.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,13 +12,15 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace FeedNews.Infrastructure.Migrations
 {
     [DbContext(typeof(FeedNewsContext))]
-    partial class FeedNewsContextModelSnapshot : ModelSnapshot
+    [Migration("20260131103323_CreateNewsTable")]
+    partial class CreateNewsTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.2")
+                .HasAnnotation("ProductVersion", "10.0.1")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -334,6 +337,85 @@ namespace FeedNews.Infrastructure.Migrations
                         .HasDatabaseName("ix_game_account_game_id");
 
                     b.ToTable("game_account", (string)null);
+                });
+
+            modelBuilder.Entity("FeedNews.Domain.Entities.News", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id")
+                        .HasDefaultValueSql("gen_random_uuid()");
+
+                    b.Property<string>("Category")
+                        .IsRequired()
+                        .HasColumnType("varchar(50)")
+                        .HasColumnName("category");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                    b.Property<DateTime>("FetchedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("fetched_at");
+
+                    b.Property<DateTime>("PublishedDate")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("published_date");
+
+                    b.Property<decimal>("RankingScore")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("numeric(10,2)")
+                        .HasDefaultValue(0m)
+                        .HasColumnName("ranking_score");
+
+                    b.Property<DateTime?>("SlackSentAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("slack_sent_at");
+
+                    b.Property<string>("Source")
+                        .IsRequired()
+                        .HasColumnType("varchar(50)")
+                        .HasColumnName("source");
+
+                    b.Property<string>("Summary")
+                        .HasColumnType("varchar(2000)")
+                        .HasColumnName("summary");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("varchar(500)")
+                        .HasColumnName("title");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                    b.Property<string>("Url")
+                        .IsRequired()
+                        .HasColumnType("varchar(2000)")
+                        .HasColumnName("url");
+
+                    b.HasKey("Id")
+                        .HasName("pk_news_feeds_id");
+
+                    b.HasIndex("Url")
+                        .IsUnique()
+                        .HasDatabaseName("uq_news_feeds_url");
+
+                    b.HasIndex("Category", "PublishedDate")
+                        .IsDescending(false, true)
+                        .HasDatabaseName("idx_news_feeds_category_pubdate");
+
+                    b.HasIndex("FetchedAt", "SlackSentAt")
+                        .HasDatabaseName("idx_news_feeds_fetched_slack");
+
+                    b.ToTable("news_feeds", (string)null);
                 });
 
             modelBuilder.Entity("FeedNews.Domain.Entities.Notification", b =>

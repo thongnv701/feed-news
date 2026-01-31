@@ -6,6 +6,9 @@ using Dapper;
 using FeedNews.Application.Common.Repositories;
 using FeedNews.Application.Common.Services;
 using FeedNews.Application.Common.Services.Dapper;
+using FeedNews.Application.Configuration;
+using FeedNews.Application.Contracts.Repositories;
+using FeedNews.Application.Contracts.Services;
 using FeedNews.Application.Shared;
 using FeedNews.Domain.Configurations;
 using FeedNews.Infrastructure.Common.Data.ApplicationInitialData;
@@ -153,6 +156,23 @@ public static class InfrastructureExtensions
             };
         });
         services.AddAuthorization();
+
+        #endregion
+
+        #region News Aggregation Configuration
+
+        services.AddHttpClient();
+
+        services.Configure<NewsConfiguration>(configuration.GetSection("NewsFeed"));
+        services.Configure<GeminiSettings>(configuration.GetSection("Gemini"));
+        services.Configure<SlackSettings>(configuration.GetSection("Slack"));
+        services.Configure<NewsFeedsConfiguration>(configuration.GetSection("NewsFeeds"));
+
+        services.AddScoped<IReutersNewsService, ReutersNewsService>();
+        services.AddScoped<IVNExpressNewsService, VNExpressNewsService>();
+        services.AddScoped<IGeminiSummarizationService, GeminiSummarizationService>();
+        services.AddScoped<ISlackNotificationService, SlackNotificationService>();
+        services.AddScoped<INewsRepository, NewsRepository>();
 
         #endregion
 

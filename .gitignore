@@ -5,7 +5,11 @@
 # .NET Core build folders
 bin/
 obj/
-
+**/bin/
+**/obj/
+backend/bin/
+backend/obj/
+**/.DS_Store
 # Common node modules locations
 /node_modules
 /wwwroot/node_modules
@@ -525,12 +529,49 @@ FodyWeavers.xsd
 
 # End of https://www.toptal.com/developers/gitignore/api/dotnetcore,rider,vim,visualstudio,visualstudiocode
 
+# Environment and configuration files
 .env
+.env.local
+.env.*.local
 appsettings.Development.json
+appsettings.*.json
 GreenHeart.API/appsettings.Development.json
 
-# Ignore .idea folder (IDE configuration for all C# development tools)
+# IDE configuration
 .idea/
+.vscode/
+*.swp
+*.swo
 
-# Ignore .zip files
+# Build artifacts
 *.zip
+*.tar.gz
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# NuGet
+nuget.exe
+nuget.config
+
+# User-specific IDE settings
+.vs/
+.rider/
+*.sln.DotSettings.user
+
+# Temporary files
+*.tmp
+*.temp
+*~
+
+# Package manager
+.paket/
+
+# Testing
+TestResults/
+.opencover/
+
+# SSL certificates
+*.pfx
+*.p12
