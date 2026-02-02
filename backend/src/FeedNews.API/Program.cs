@@ -8,6 +8,7 @@ using FeedNews.API.Middleware;
 using FeedNews.Application;
 using FeedNews.Domain;
 using FeedNews.Infrastructure;
+using FeedNews.Infrastructure.Extensions;
 using FeedNews.Share;
 using Microsoft.OpenApi;
 
@@ -47,9 +48,31 @@ builder.Services.AddHostedService<NewsAggregationBackgroundService>();
 
 builder.Services.AddControllers();
 
-// Loging
+// Logging configuration
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
+builder.Logging.AddDebug();
+
+// Add Slack webhook logging
+var slackWebhookUrl = builder.Configuration["Slack:WebhookUrl"];
+if (!string.IsNullOrWhiteSpace(slackWebhookUrl))
+{
+    var slackMinLogLevel = builder.Configuration["Slack:MinimumLogLevel"] ?? "Warning";
+    var includeException = builder.Configuration["Slack:IncludeException"] == "true" || 
+                           builder.Configuration["Slack:IncludeException"] == "True";
+    var includeTimestamp = builder.Configuration["Slack:IncludeTimestamp"] != "false" && 
+                           builder.Configuration["Slack:IncludeTimestamp"] != "False";
+    
+    if (Enum.TryParse<LogLevel>(slackMinLogLevel, out var logLevel))
+    {
+        builder.Logging.AddSlackWebhook(
+            slackWebhookUrl,
+            minimumLogLevel: logLevel,
+            includeException: includeException,
+            includeTimestamp: includeTimestamp
+        );
+    }
+}
 
 // Carter
 builder.Services.AddCarter();
@@ -69,7 +92,7 @@ builder.Services.AddSwaggerGen(options =>
             "v1",
             new OpenApiInfo
             {
-                Title = "SMdm API",
+                Title = "FeedNews API",
                 Version = "v1",
                 Description = "API for Supplier Master Data Management",
                 Contact = new OpenApiContact { Name = "OPS Tribe" }

@@ -170,6 +170,7 @@ public static class InfrastructureExtensions
 
         services.AddScoped<IReutersNewsService, ReutersNewsService>();
         services.AddScoped<IVNExpressNewsService, VNExpressNewsService>();
+        services.AddScoped<IArticleContentFetchService, ArticleContentFetchService>();
         services.AddScoped<IGeminiSummarizationService, GeminiSummarizationService>();
         services.AddScoped<ISlackNotificationService, SlackNotificationService>();
         services.AddScoped<INewsRepository, NewsRepository>();

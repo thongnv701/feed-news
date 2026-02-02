@@ -17,7 +17,12 @@ public class GenerateSummaryCommandHandler : IRequestHandler<GenerateSummaryComm
     {
         if (string.IsNullOrWhiteSpace(request.News.Summary))
         {
-            var summary = await _geminiService.SummarizeArticleAsync(request.News.Title, request.News.Url);
+            // Use content if available, otherwise fallback to title
+            var textToSummarize = !string.IsNullOrWhiteSpace(request.News.Content) 
+                ? request.News.Content 
+                : request.News.Title;
+                
+            var summary = await _geminiService.SummarizeArticleAsync(request.News.Title, textToSummarize);
             request.News.Summary = summary;
             request.News.UpdatedAt = DateTime.UtcNow;
         }

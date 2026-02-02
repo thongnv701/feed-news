@@ -24,6 +24,11 @@ public class News
     public string Url { get; set; } = string.Empty;
 
     /// <summary>
+    /// Full article content/body text extracted from the article page.
+    /// </summary>
+    public string Content { get; set; } = string.Empty;
+
+    /// <summary>
     /// AI-generated summary of the article (200-500 characters).
     /// </summary>
     public string Summary { get; set; } = string.Empty;
