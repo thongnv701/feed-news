@@ -103,22 +103,40 @@ public class SlackNotificationService : ISlackNotificationService
         var messages = new List<string>();
         var currentMessage = new System.Text.StringBuilder();
 
-        // Header
-        var header = $"📰 *Daily News Summary* 📰\n_Generated at {DateTime.UtcNow:yyyy-MM-dd HH:mm:ss} UTC_\n\n";
-        currentMessage.Append(header);
-
+        // Count total articles and verify top 5 per category
         var groupedByCategory = articles.GroupBy(a => a.Category).OrderBy(g => g.Key);
+        int totalArticlesCount = 0;
+        var articlesPerCategory = new Dictionary<string, int>();
 
         foreach (var categoryGroup in groupedByCategory)
         {
+            var topArticles = categoryGroup.OrderByDescending(a => a.PublishedDate).Take(5).ToList();
+            articlesPerCategory[categoryGroup.Key.ToString()] = topArticles.Count;
+            totalArticlesCount += topArticles.Count;
+        }
+
+        // Log verification to console (for backend visibility)
+        _logger.LogInformation("📊 SLACK SEND VERIFICATION - Total articles: {TotalCount} | Per category: {PerCategory}", 
+            totalArticlesCount, 
+            string.Join(", ", articlesPerCategory.Select(x => $"{x.Key}={x.Value}")));
+
+        // Header with article count verification
+        var header = $"📰 *Daily News Summary* 📰\n_Generated at {DateTime.UtcNow:yyyy-MM-dd HH:mm:ss} UTC_\n✅ *Total: {totalArticlesCount} articles ({string.Join(", ", articlesPerCategory.Select(x => $"{x.Key}: {x.Value}"))})_\n\n";
+        currentMessage.Append(header);
+
+        foreach (var categoryGroup in groupedByCategory)
+        {
+            var topArticles = categoryGroup.OrderByDescending(a => a.PublishedDate).Take(5).ToList();
+            
             var categoryText = new System.Text.StringBuilder();
-            categoryText.AppendLine($"*{categoryGroup.Key}*");
+            categoryText.AppendLine($"*{categoryGroup.Key}* ({topArticles.Count} articles)");
             categoryText.AppendLine("---");
 
-            foreach (var article in categoryGroup.OrderByDescending(a => a.PublishedDate).Take(5))
+            int postNumber = 1;
+            foreach (var article in topArticles)
             {
                 var articleText = new System.Text.StringBuilder();
-                articleText.AppendLine($"• <{article.Url}|{article.Title}>");
+                articleText.AppendLine($"*{postNumber}. <{article.Url}|{article.Title}>*");
                 articleText.AppendLine($"  _Source: {article.Source} | Published: {article.PublishedDate:yyyy-MM-dd HH:mm}Z_");
                 
                 if (!string.IsNullOrWhiteSpace(article.Summary))
@@ -127,7 +145,11 @@ public class SlackNotificationService : ISlackNotificationService
                     articleText.AppendLine($"  {article.Summary}");
                 }
                 
+                // Add separator between articles
+                articleText.AppendLine("  ═════════════════════════════════════════");
                 articleText.AppendLine();
+
+                postNumber++;
 
                 // Check if adding this article would exceed limit
                 string potentialMessage = currentMessage.ToString() + categoryText.ToString() + articleText.ToString();
