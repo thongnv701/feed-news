@@ -24,13 +24,15 @@ public class FetchNewsCommandHandler : IRequestHandler<FetchNewsCommand, List<Ne
 
     public async Task<List<NewsEntity>> Handle(FetchNewsCommand request, CancellationToken cancellationToken)
     {
-        var reutersTasks = _reutersService.FetchNewsByCategoryAsync(request.Category);
+        // TODO: Reuters endpoint not yet identified - commented out for now
+        // var reutersTasks = _reutersService.FetchNewsByCategoryAsync(request.Category);
         var vnExpressTasks = _vnExpressService.FetchNewsByCategoryAsync(request.Category);
 
-        await Task.WhenAll(reutersTasks, vnExpressTasks);
+        // await Task.WhenAll(reutersTasks, vnExpressTasks);
+        await vnExpressTasks;
 
         var allNews = new List<NewsEntity>();
-        allNews.AddRange(await reutersTasks);
+        // allNews.AddRange(await reutersTasks);
         allNews.AddRange(await vnExpressTasks);
 
         var uniqueNews = new List<NewsEntity>();

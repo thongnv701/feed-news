@@ -5,4 +5,6 @@ public class SlackSettings
     public string BotToken { get; set; } = string.Empty;
     
     public string ChannelId { get; set; } = string.Empty;
+    
+    public string WebhookUrl { get; set; } = string.Empty;
 }

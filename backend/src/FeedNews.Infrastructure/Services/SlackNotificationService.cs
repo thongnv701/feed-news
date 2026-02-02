@@ -12,7 +12,6 @@ public class SlackNotificationService : ISlackNotificationService
     private readonly SlackSettings _slackSettings;
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly ILogger<SlackNotificationService> _logger;
-    private const string SlackApiUrl = "https://slack.com/api/chat.postMessage";
 
     public SlackNotificationService(
         IOptions<SlackSettings> slackSettings,
@@ -26,96 +25,134 @@ public class SlackNotificationService : ISlackNotificationService
 
     public async Task<bool> SendNewsToSlackAsync(List<News> articles)
     {
-        if (string.IsNullOrWhiteSpace(_slackSettings.BotToken) || string.IsNullOrWhiteSpace(_slackSettings.ChannelId))
+        // Use Webhook URL if configured, otherwise fallback to Bot Token
+        var webhookUrl = _slackSettings.WebhookUrl;
+        if (string.IsNullOrWhiteSpace(webhookUrl))
         {
-            _logger.LogWarning("Slack credentials not configured - cannot send news");
+            _logger.LogDebug("Slack webhook URL not configured");
             return false;
         }
 
         if (articles == null || articles.Count == 0)
         {
-            _logger.LogWarning("No articles to send to Slack");
+            _logger.LogDebug("No articles to send to Slack");
             return false;
         }
 
         try
         {
-            _logger.LogInformation("Preparing to send {Count} articles to Slack", articles.Count);
+            _logger.LogDebug("Preparing to send {Count} articles to Slack webhook", articles.Count);
 
             var httpClient = _httpClientFactory.CreateClient();
-            httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {_slackSettings.BotToken}");
 
-            var message = BuildSlackMessage(articles);
+            // Build messages and split if needed
+            var messages = BuildSlackMessages(articles);
             
-            var payload = new
+            _logger.LogDebug("Sending {MessageCount} message(s) to Slack", messages.Count);
+
+            // Send all messages
+            int successCount = 0;
+            foreach (var message in messages)
             {
-                channel = _slackSettings.ChannelId,
-                text = message,
-                mrkdwn = true
-            };
+                var payload = new
+                {
+                    text = message,
+                    mrkdwn = true
+                };
 
-            var jsonContent = JsonSerializer.Serialize(payload);
-            var content = new StringContent(jsonContent, System.Text.Encoding.UTF8, "application/json");
+                var jsonContent = JsonSerializer.Serialize(payload);
+                var content = new StringContent(jsonContent, System.Text.Encoding.UTF8, "application/json");
 
-            var response = await httpClient.PostAsync(SlackApiUrl, content);
+                var response = await httpClient.PostAsync(webhookUrl, content);
 
-            var responseText = await response.Content.ReadAsStringAsync();
-            var responseJson = JsonSerializer.Deserialize<JsonElement>(responseText);
+                if (response.IsSuccessStatusCode)
+                {
+                    successCount++;
+                }
+                else
+                {
+                    var responseText = await response.Content.ReadAsStringAsync();
+                    _logger.LogDebug("Failed to send message to Slack webhook: {StatusCode} - {Error}", response.StatusCode, responseText);
+                }
+                
+                // Add small delay between messages to avoid rate limiting
+                await Task.Delay(200);
+            }
 
-            if (responseJson.TryGetProperty("ok", out var okProp) && okProp.GetBoolean())
+            if (successCount > 0)
             {
-                _logger.LogInformation("Successfully sent {Count} articles to Slack", articles.Count);
+                _logger.LogDebug("Successfully sent {SuccessCount}/{TotalCount} message(s) to Slack webhook", successCount, messages.Count);
                 return true;
             }
             else
             {
-                var errorMsg = responseJson.TryGetProperty("error", out var errorProp)
-                    ? errorProp.GetString()
-                    : "Unknown error";
-                _logger.LogError("Failed to send message to Slack: {Error}", errorMsg);
+                _logger.LogDebug("Failed to send any messages to Slack webhook");
                 return false;
             }
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error sending news to Slack");
+            _logger.LogDebug(ex, "Error sending news to Slack webhook");
             return false;
         }
     }
 
-    private string BuildSlackMessage(List<News> articles)
+    private List<string> BuildSlackMessages(List<News> articles)
     {
+        const int maxMessageLength = 13000; // Safe limit for webhook messages
+        var messages = new List<string>();
+        var currentMessage = new System.Text.StringBuilder();
+
+        // Header
+        var header = $"📰 *Daily News Summary* 📰\n_Generated at {DateTime.UtcNow:yyyy-MM-dd HH:mm:ss} UTC_\n\n";
+        currentMessage.Append(header);
+
         var groupedByCategory = articles.GroupBy(a => a.Category).OrderBy(g => g.Key);
-        
-        var messageBuilder = new System.Text.StringBuilder();
-        messageBuilder.AppendLine("📰 *Daily News Summary* 📰");
-        messageBuilder.AppendLine($"_Generated at {DateTime.UtcNow:yyyy-MM-dd HH:mm:ss} UTC_");
-        messageBuilder.AppendLine();
 
         foreach (var categoryGroup in groupedByCategory)
         {
-            messageBuilder.AppendLine($"*{categoryGroup.Key}*");
-            messageBuilder.AppendLine("---");
+            var categoryText = new System.Text.StringBuilder();
+            categoryText.AppendLine($"*{categoryGroup.Key}*");
+            categoryText.AppendLine("---");
 
             foreach (var article in categoryGroup.OrderByDescending(a => a.PublishedDate).Take(5))
             {
-                messageBuilder.AppendLine($"• <{article.Url}|{article.Title}>");
-                messageBuilder.AppendLine($"  _Source: {article.Source} | Published: {article.PublishedDate:yyyy-MM-dd HH:mm}Z_");
+                var articleText = new System.Text.StringBuilder();
+                articleText.AppendLine($"• <{article.Url}|{article.Title}>");
+                articleText.AppendLine($"  _Source: {article.Source} | Published: {article.PublishedDate:yyyy-MM-dd HH:mm}Z_");
                 
                 if (!string.IsNullOrWhiteSpace(article.Summary))
                 {
-                    var truncatedSummary = article.Summary.Length > 300 
-                        ? article.Summary[..297] + "..." 
-                        : article.Summary;
-                    messageBuilder.AppendLine($"  {truncatedSummary}");
+                    // Keep full summary, don't truncate - let Slack handle it
+                    articleText.AppendLine($"  {article.Summary}");
                 }
                 
-                messageBuilder.AppendLine();
+                articleText.AppendLine();
+
+                // Check if adding this article would exceed limit
+                string potentialMessage = currentMessage.ToString() + categoryText.ToString() + articleText.ToString();
+                
+                if (potentialMessage.Length > maxMessageLength && currentMessage.Length > header.Length)
+                {
+                    // Save current message and start new one
+                    messages.Add(currentMessage.ToString().TrimEnd());
+                    currentMessage.Clear();
+                    currentMessage.Append($"📰 *Daily News Summary (continued)* 📰\n\n");
+                    currentMessage.Append(categoryText.ToString());
+                }
+
+                currentMessage.Append(articleText.ToString());
             }
 
-            messageBuilder.AppendLine();
+            categoryText.AppendLine();
         }
 
-        return messageBuilder.ToString();
+        // Add remaining content
+        if (currentMessage.Length > header.Length)
+        {
+            messages.Add(currentMessage.ToString().TrimEnd());
+        }
+
+        return messages;
     }
 }

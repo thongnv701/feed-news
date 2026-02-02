@@ -36,13 +36,13 @@
     </ItemGroup>
 
     <ItemGroup>
-        <EmbeddedResource Include="Common\Queries\TestQuery.sql">
-            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </EmbeddedResource>
         <EmbeddedResource Update="Common\Resources\MessageErrors.resx">
             <Generator>ResXFileCodeGenerator</Generator>
             <LastGenOutput>MessageErrors.Designer.cs</LastGenOutput>
         </EmbeddedResource>
+        <Folder Include="Common\Exceptions\"/>
+        <Folder Include="Migrations\"/>
+        <Folder Include="Persistence\Migrations\"/>
     </ItemGroup>
 
     <ItemGroup>

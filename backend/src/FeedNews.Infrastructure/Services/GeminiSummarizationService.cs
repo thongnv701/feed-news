@@ -41,14 +41,31 @@ public class GeminiSummarizationService : IGeminiSummarizationService
         {
             _logger.LogDebug("Starting summarization for article: {Title}", title);
 
-            var prompt = $@"Please summarize the following news article in 200-500 words. Focus on key facts, implications, and main takeaways.
+            // Determine if we're summarizing from full content or just title
+            var hasFullContent = !string.IsNullOrWhiteSpace(content) && content.Length > 100;
+            
+            var prompt = hasFullContent 
+                ? $@"Please create a detailed summary of the following news article in 300-600 words. IMPORTANT - Focus on:
+1. **Key Numbers & Statistics** - Extract all specific numbers, percentages, dates, values mentioned
+2. **Important Quotes** - Include the most relevant direct quotes from the article
+3. **Main Points** - What happened, why it matters, who it affects
+4. **Context & Implications** - Background information and potential impact
 
 Article Title: {title}
 
 Article Content:
 {content}
 
-Summary:";
+Provide a comprehensive summary with clear sections for numbers/statistics and important quotes."
+                : $@"Based on the following news headline, create a brief 150-300 word summary that:
+1. **Expands on what the headline suggests**
+2. **Provides realistic context** about what might have happened
+3. **Highlights key implications** and why this matters
+4. **Suggests possible impact** on industry/market/society
+
+News Headline: {title}
+
+Create a concise but informative summary. Since we only have the headline, infer the likely context based on current events and industry knowledge.";
 
             var httpClient = _httpClientFactory.CreateClient();
             
@@ -80,7 +97,8 @@ Summary:";
             if (!response.IsSuccessStatusCode)
             {
                 var errorContent = await response.Content.ReadAsStringAsync();
-                _logger.LogError("Gemini API error for article {Title}: {StatusCode} - {Error}", title, response.StatusCode, errorContent);
+                // Don't log errors to Slack - keep channel clean for final results only
+                _logger.LogDebug("Gemini API error for article {Title}: {StatusCode} - {Error}", title, response.StatusCode, errorContent);
                 return $"Error generating summary - API returned {response.StatusCode}";
             }
 
@@ -100,7 +118,8 @@ Summary:";
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error generating summary for article: {Title}", title);
+            // Don't log errors to Slack - keep channel clean for final results only
+            _logger.LogDebug(ex, "Error generating summary for article: {Title}", title);
             return $"Error generating summary: {ex.Message}";
         }
     }

@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using FeedNews.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
@@ -37,8 +37,4 @@ public class Account : BaseEntity
     public long RoleId { get; set; }
 
     [ForeignKey("RoleId")] public virtual Role Role { get; set; } = null!;
-
-    public virtual ICollection<Notification> Notifications { get; set; } = new List<Notification>();
-
-    public virtual ICollection<Favourite> Favourites { get; set; } = new List<Favourite>();
 }
