@@ -14,6 +14,7 @@ using FeedNews.Domain.Configurations;
 using FeedNews.Infrastructure.Common.Data.ApplicationInitialData;
 using FeedNews.Infrastructure.Persistence.Contexts;
 using FeedNews.Infrastructure.Persistence.Repositories;
+using FeedNews.Infrastructure.Repositories;
 using FeedNews.Infrastructure.Services;
 using FeedNews.Infrastructure.Services.Dapper;
 using FeedNews.Infrastructure.Services.Resource;
@@ -174,6 +175,21 @@ public static class InfrastructureExtensions
         services.AddScoped<IGeminiSummarizationService, GeminiSummarizationService>();
         services.AddScoped<ISlackNotificationService, SlackNotificationService>();
         services.AddScoped<INewsRepository, NewsRepository>();
+
+        #endregion
+
+        #region Knowledge Base Configuration
+
+        // Knowledge base repositories
+        services.AddScoped<IKnowledgeRepository, KnowledgeRepository>();
+        services.AddScoped<IAnalysisQuestionRepository, AnalysisQuestionRepository>();
+        services.AddScoped<IKnowledgeDisputeRepository, KnowledgeDisputeRepository>();
+        services.AddScoped<IArticleAnalysisResultRepository, ArticleAnalysisResultRepository>();
+
+        // Knowledge base services
+        services.AddScoped<IKnowledgeBaseService, KnowledgeBaseService>();
+        services.AddScoped<IAnalysisEnhancementService, AnalysisEnhancementService>();
+        services.AddScoped<IGeminiEnhancementService, GeminiEnhancementService>();
 
         #endregion
 

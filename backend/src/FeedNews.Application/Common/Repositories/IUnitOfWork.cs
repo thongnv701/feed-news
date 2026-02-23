@@ -7,6 +7,10 @@ public interface IUnitOfWork
     bool IsTransaction { get; }
 
     INewsRepository News { get; }
+    IKnowledgeRepository Knowledge { get; }
+    IAnalysisQuestionRepository AnalysisQuestions { get; }
+    IKnowledgeDisputeRepository KnowledgeDisputes { get; }
+    IArticleAnalysisResultRepository AnalysisResults { get; }
 
     Task BeginTransactionAsync();
 

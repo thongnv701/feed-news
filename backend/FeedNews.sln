@@ -1,4 +1,4 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.8.34511.84
@@ -12,6 +12,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FeedNews.Infrastructure", "src\FeedNews.Infrastructure\FeedNews.Infrastructure.csproj", "{CDE4B7DB-1474-4820-BFFD-5625F0A789BA}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FeedNews.Share", "src\FeedNews.Share\FeedNews.Share.csproj", "{F9FF1F5F-5FE2-4F81-8B7D-107DE7EB8C2B}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FeedNews.ConsoleApp", "src\FeedNews.ConsoleApp\FeedNews.ConsoleApp.csproj", "{B4597C18-B0A6-4020-9410-F353B206D03C}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Presentation", "Presentation", "{5C327800-898B-4163-B098-C29BE27DAA7A}"
 EndProject
@@ -47,6 +49,10 @@ Global
 		{F9FF1F5F-5FE2-4F81-8B7D-107DE7EB8C2B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F9FF1F5F-5FE2-4F81-8B7D-107DE7EB8C2B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F9FF1F5F-5FE2-4F81-8B7D-107DE7EB8C2B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B4597C18-B0A6-4020-9410-F353B206D03C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B4597C18-B0A6-4020-9410-F353B206D03C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B4597C18-B0A6-4020-9410-F353B206D03C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B4597C18-B0A6-4020-9410-F353B206D03C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -56,6 +62,7 @@ Global
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{79E4E097-C570-4FE0-A976-CAD13E15480B} = {5C327800-898B-4163-B098-C29BE27DAA7A}
+		{B4597C18-B0A6-4020-9410-F353B206D03C} = {5C327800-898B-4163-B098-C29BE27DAA7A}
 		{EEF8DAF5-B9F5-4808-9998-C270814A9E17} = {7CBE8BF2-96AB-4D2D-BFA6-97603C5D63E9}
 		{B138CA7F-1062-4635-A41B-681B73EFA28C} = {7CBE8BF2-96AB-4D2D-BFA6-97603C5D63E9}
 		{CDE4B7DB-1474-4820-BFFD-5625F0A789BA} = {E42D4EA0-B953-4037-A0AB-543753AD3348}

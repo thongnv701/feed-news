@@ -89,7 +89,11 @@ public class VNExpressNewsService : IVNExpressNewsService
             var doc = XDocument.Parse(rssContent);
             var items = doc.Descendants("item");
 
-            foreach (var item in items.Take(20))
+            // Get the configured article limit for this category
+            var limit = GetArticleLimit(category.ToString());
+            _logger.LogDebug("Using article limit {Limit} for category {Category}", limit, category);
+
+            foreach (var item in items.Take(limit))
             {
                 var title = item.Element("title")?.Value ?? "Untitled";
                 var link = item.Element("link")?.Value ?? string.Empty;
@@ -122,5 +126,29 @@ public class VNExpressNewsService : IVNExpressNewsService
         }
 
         return newsList;
+    }
+
+    /// <summary>
+    /// Gets the configured maximum article limit for a specific category.
+    /// Falls back to "Default" if category is not configured.
+    /// </summary>
+    private int GetArticleLimit(string category)
+    {
+        if (_feedsConfig.MaxArticlesPerFetch.TryGetValue(category, out var limit))
+        {
+            _logger.LogInformation("Using configured article limit for category {Category}: {Limit}", category, limit);
+            return limit;
+        }
+
+        if (_feedsConfig.MaxArticlesPerFetch.TryGetValue("Default", out var defaultLimit))
+        {
+            _logger.LogInformation("Using default article limit: {Limit}", defaultLimit);
+            return defaultLimit;
+        }
+
+        const int fallbackLimit = 5;
+        _logger.LogWarning("No article limit configured for category {Category}, using fallback: {Limit}", 
+            category, fallbackLimit);
+        return fallbackLimit;
     }
 }

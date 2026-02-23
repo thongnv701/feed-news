@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net10.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <InvariantGlobalization>false</InvariantGlobalization>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="DotNetEnv" Version="3.1.1"/>
+        <PackageReference Include="Microsoft.Extensions.Configuration" Version="10.0.1"/>
+        <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="10.0.1"/>
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.1"/>
+        <PackageReference Include="Microsoft.Extensions.Logging" Version="10.0.1"/>
+        <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="10.0.1"/>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.1">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\FeedNews.Application\FeedNews.Application.csproj"/>
+        <ProjectReference Include="..\FeedNews.Infrastructure\FeedNews.Infrastructure.csproj"/>
+    </ItemGroup>
+
+</Project>

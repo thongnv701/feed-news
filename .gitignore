@@ -540,8 +540,9 @@ FodyWeavers.xsd
 .env.local
 .env.*.local
 appsettings.Development.json
-appsettings.*.json
+appsettings.*.Development.json
 GreenHeart.API/appsettings.Development.json
+backend/src/**/appsettings.Development.json
 
 # IDE configuration
 .idea/

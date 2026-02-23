@@ -1,6 +1,7 @@
 using FeedNews.Application.Common.Repositories;
 using FeedNews.Application.Contracts.Repositories;
 using FeedNews.Infrastructure.Persistence.Contexts;
+using FeedNews.Infrastructure.Repositories;
 
 namespace FeedNews.Infrastructure.Persistence.Repositories;
 
@@ -9,6 +10,10 @@ public class UnitOfWork : IUnitOfWork
     private const string ErrorNotOpenTransaction = "You not open transaction yet!";
     private const string ErrorAlreadyOpenTransaction = "Transaction already open";
     private INewsRepository? _newsRepository;
+    private IKnowledgeRepository? _knowledgeRepository;
+    private IAnalysisQuestionRepository? _analysisQuestionRepository;
+    private IKnowledgeDisputeRepository? _knowledgeDisputeRepository;
+    private IArticleAnalysisResultRepository? _analysisResultRepository;
 
     public UnitOfWork(FeedNewsContext context)
     {
@@ -25,6 +30,42 @@ public class UnitOfWork : IUnitOfWork
         {
             _newsRepository ??= new NewsRepository(Context);
             return _newsRepository;
+        }
+    }
+
+    public IKnowledgeRepository Knowledge
+    {
+        get
+        {
+            _knowledgeRepository ??= new KnowledgeRepository(Context);
+            return _knowledgeRepository;
+        }
+    }
+
+    public IAnalysisQuestionRepository AnalysisQuestions
+    {
+        get
+        {
+            _analysisQuestionRepository ??= new AnalysisQuestionRepository(Context);
+            return _analysisQuestionRepository;
+        }
+    }
+
+    public IKnowledgeDisputeRepository KnowledgeDisputes
+    {
+        get
+        {
+            _knowledgeDisputeRepository ??= new KnowledgeDisputeRepository(Context);
+            return _knowledgeDisputeRepository;
+        }
+    }
+
+    public IArticleAnalysisResultRepository AnalysisResults
+    {
+        get
+        {
+            _analysisResultRepository ??= new ArticleAnalysisResultRepository(Context);
+            return _analysisResultRepository;
         }
     }
 

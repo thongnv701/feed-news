@@ -66,4 +66,17 @@ public class NewsRepository : INewsRepository
             .AnyAsync(n => n.Url == url)
             .ConfigureAwait(false);
     }
+
+    /// <summary>
+    /// Checks if a news article with the given ID exists in the database.
+    /// Used to validate foreign key relationships before saving dependent entities.
+    /// </summary>
+    /// <param name="id">The news ID to check</param>
+    /// <returns>True if news exists, false otherwise</returns>
+    public async Task<bool> ExistsAsync(Guid id)
+    {
+        return await _context.NewsFeeds
+            .AnyAsync(n => n.Id == id)
+            .ConfigureAwait(false);
+    }
 }

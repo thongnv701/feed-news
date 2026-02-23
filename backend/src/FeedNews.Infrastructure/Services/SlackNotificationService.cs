@@ -1,4 +1,5 @@
 using System.Text.Json;
+using FeedNews.Application.Common.Repositories;
 using FeedNews.Application.Contracts.Services;
 using FeedNews.Domain.Entities;
 using FeedNews.Application.Configuration;
@@ -11,15 +12,18 @@ public class SlackNotificationService : ISlackNotificationService
 {
     private readonly SlackSettings _slackSettings;
     private readonly IHttpClientFactory _httpClientFactory;
+    private readonly IArticleAnalysisResultRepository _analysisResultRepository;
     private readonly ILogger<SlackNotificationService> _logger;
 
     public SlackNotificationService(
         IOptions<SlackSettings> slackSettings,
         IHttpClientFactory httpClientFactory,
+        IArticleAnalysisResultRepository analysisResultRepository,
         ILogger<SlackNotificationService> logger)
     {
         _slackSettings = slackSettings.Value;
         _httpClientFactory = httpClientFactory;
+        _analysisResultRepository = analysisResultRepository;
         _logger = logger;
     }
 
@@ -46,7 +50,7 @@ public class SlackNotificationService : ISlackNotificationService
             var httpClient = _httpClientFactory.CreateClient();
 
             // Build messages and split if needed
-            var messages = BuildSlackMessages(articles);
+            var messages = await BuildSlackMessagesAsync(articles);
             
             _logger.LogDebug("Sending {MessageCount} message(s) to Slack", messages.Count);
 
@@ -97,9 +101,9 @@ public class SlackNotificationService : ISlackNotificationService
         }
     }
 
-    private List<string> BuildSlackMessages(List<News> articles)
+    private async Task<List<string>> BuildSlackMessagesAsync(List<News> articles)
     {
-        const int maxMessageLength = 13000; // Safe limit for webhook messages
+        const int maxMessageLength = 30000;
         var messages = new List<string>();
         var currentMessage = new System.Text.StringBuilder();
 
@@ -130,7 +134,7 @@ public class SlackNotificationService : ISlackNotificationService
             
             var categoryText = new System.Text.StringBuilder();
             categoryText.AppendLine($"*{categoryGroup.Key}* ({topArticles.Count} articles)");
-            categoryText.AppendLine("---");
+            categoryText.AppendLine("═════════════════════════════════════════");
 
             int postNumber = 1;
             foreach (var article in topArticles)
@@ -139,13 +143,68 @@ public class SlackNotificationService : ISlackNotificationService
                 articleText.AppendLine($"*{postNumber}. <{article.Url}|{article.Title}>*");
                 articleText.AppendLine($"  _Source: {article.Source} | Published: {article.PublishedDate:yyyy-MM-dd HH:mm}Z_");
                 
+                // Original Summary
                 if (!string.IsNullOrWhiteSpace(article.Summary))
                 {
-                    // Keep full summary, don't truncate - let Slack handle it
+                    articleText.AppendLine();
+                    articleText.AppendLine("📝 *SUMMARY:*");
                     articleText.AppendLine($"  {article.Summary}");
+                }
+
+                // Try to retrieve enhanced analysis for this article
+                try
+                {
+                    var analysis = await _analysisResultRepository.GetByNewsIdAsync(article.Id);
+                    if (analysis != null && !string.IsNullOrWhiteSpace(analysis.EnhancedAnalysis))
+                    {
+                        articleText.AppendLine();
+                        articleText.AppendLine("💡 *ANALYSIS INSIGHTS:*");
+                        
+                        // Split analysis into lines and wrap text to 80 chars per line
+                        var analysisLines = WrapText(analysis.EnhancedAnalysis, 80);
+                        foreach (var line in analysisLines)
+                        {
+                            articleText.AppendLine($"  {line}");
+                        }
+
+                        // Add confidence level
+                        var confidenceEmoji = analysis.ConfidenceLevel switch
+                        {
+                            "HIGH" => "✅",
+                            "MEDIUM" => "⚠️",
+                            "LOW" => "❌",
+                            _ => "❓"
+                        };
+                        articleText.AppendLine();
+                        articleText.AppendLine($"  *Confidence Level:* {confidenceEmoji} {analysis.ConfidenceLevel}");
+
+                        // Add key sources
+                        if (analysis.SourceUrls != null && analysis.SourceUrls.Length > 0)
+                        {
+                            articleText.AppendLine();
+                            articleText.AppendLine("📚 *KEY SOURCES:*");
+                            foreach (var sourceUrl in analysis.SourceUrls.Take(3)) // Limit to first 3 sources
+                            {
+                                if (!string.IsNullOrWhiteSpace(sourceUrl))
+                                {
+                                    articleText.AppendLine($"  • <{sourceUrl}|Source>");
+                                }
+                            }
+                            if (analysis.SourceUrls.Length > 3)
+                            {
+                                articleText.AppendLine($"  ... and {analysis.SourceUrls.Length - 3} more sources");
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogWarning(ex, "Error retrieving analysis for article {NewsId}", article.Id);
+                    // Continue without analysis if there's an error
                 }
                 
                 // Add separator between articles
+                articleText.AppendLine();
                 articleText.AppendLine("  ═════════════════════════════════════════");
                 articleText.AppendLine();
 
@@ -176,5 +235,37 @@ public class SlackNotificationService : ISlackNotificationService
         }
 
         return messages;
+    }
+
+    /// <summary>
+    /// Wraps text to specified character width, preserving words
+    /// </summary>
+    private List<string> WrapText(string text, int maxWidth)
+    {
+        if (string.IsNullOrWhiteSpace(text))
+            return new List<string>();
+
+        var lines = new List<string>();
+        var words = text.Split(new[] { ' ', '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
+        var currentLine = new System.Text.StringBuilder();
+
+        foreach (var word in words)
+        {
+            if (currentLine.Length + word.Length + 1 > maxWidth && currentLine.Length > 0)
+            {
+                lines.Add(currentLine.ToString().Trim());
+                currentLine.Clear();
+            }
+
+            if (currentLine.Length > 0)
+                currentLine.Append(" ");
+            
+            currentLine.Append(word);
+        }
+
+        if (currentLine.Length > 0)
+            lines.Add(currentLine.ToString().Trim());
+
+        return lines;
     }
 }
